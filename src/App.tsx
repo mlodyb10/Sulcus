@@ -1,3 +1,10 @@
+import { FragrancePyramid } from '@/components/pyramid/FragrancePyramid'
+import { products } from '@/data/products'
+
 export function App() {
-  return <div className="text-[#EDE3CC] p-8 font-serif text-4xl">Sulcus</div>
+  return (
+    <div className="min-h-screen bg-[#162D22] p-16">
+      <FragrancePyramid notes={products[0].notes} />
+    </div>
+  )
 }
