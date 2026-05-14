@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Note } from '../../data/products'
 
@@ -55,6 +55,14 @@ function PyramidSVG({ activeKey }: { activeKey: 'top' | 'heart' | 'base' | null 
 export function FragrancePyramid({ notes }: Props) {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
 
+  const prevNotesRef = useRef(notes)
+  useEffect(() => {
+    if (prevNotesRef.current !== notes) {
+      setSelectedNote(null)
+      prevNotesRef.current = notes
+    }
+  }, [notes])
+
   const activeKey = selectedNote
     ? notes.top.some(n => n.name === selectedNote.name)
       ? 'top'
@@ -80,10 +88,11 @@ export function FragrancePyramid({ notes }: Props) {
               <div className="space-y-1">
                 {notes[tier.key].map(note => (
                   <motion.button
+                    type="button"
                     key={note.name}
                     onClick={() => setSelectedNote(note)}
-                    whileHover={{ x: 2 }}
-                    transition={{ duration: 0.15 }}
+                    whileHover={{ x: 2, transition: { duration: 0.15 } }}
+                    aria-pressed={selectedNote?.name === note.name}
                     className={`block text-left text-sm tracking-wide transition-colors duration-200 ${
                       selectedNote?.name === note.name
                         ? 'text-[#EDE3CC]'
