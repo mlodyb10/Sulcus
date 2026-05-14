@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #162D22;
+  --color-cream: #EDE3CC;
+  --color-dark: #0a0a0a;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Space Grotesk', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background-color: #162D22;
+  color: #EDE3CC;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
