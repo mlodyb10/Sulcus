@@ -6,8 +6,10 @@ export function CartDrawer() {
   const { items, isOpen, itemCount, total, removeItem, setQuantity, closeCart } = useCart()
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    if (!isOpen) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previous }
   }, [isOpen])
 
   useEffect(() => {
@@ -75,7 +77,8 @@ export function CartDrawer() {
                         <button
                           type="button"
                           onClick={() => setQuantity(item.product.id, item.quantity - 1)}
-                          className="w-6 h-6 flex items-center justify-center border border-[rgba(237,227,204,0.25)] text-[rgba(237,227,204,0.6)] hover:text-[#EDE3CC] hover:border-[rgba(237,227,204,0.5)] transition-colors text-sm"
+                          disabled={item.quantity <= 1}
+                          className="w-6 h-6 flex items-center justify-center border border-[rgba(237,227,204,0.25)] text-[rgba(237,227,204,0.6)] hover:text-[#EDE3CC] hover:border-[rgba(237,227,204,0.5)] transition-colors text-sm disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           −
                         </button>

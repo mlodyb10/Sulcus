@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, useCallback, useMemo, type ReactNode } from 'react'
 import type { Product } from '../data/products'
 
 export interface CartItem {
@@ -50,19 +50,33 @@ function reducer(state: State, action: Action): State {
       return { ...state, isOpen: true }
     case 'CLOSE':
       return { ...state, isOpen: false }
-    default:
-      return state
+    default: {
+      const _exhaustive: never = action
+      return _exhaustive
+    }
   }
 }
 
 const KEY = 'sulcus_cart'
+
+function isValidItem(x: unknown): x is CartItem {
+  if (!x || typeof x !== 'object') return false
+  const item = x as Record<string, unknown>
+  const p = item.product as Record<string, unknown> | undefined
+  return (
+    typeof item.quantity === 'number' &&
+    !!p &&
+    typeof p.id === 'string' &&
+    typeof p.price === 'number'
+  )
+}
 
 function loadItems(): CartItem[] {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
+    return Array.isArray(parsed) ? parsed.filter(isValidItem) : []
   } catch {
     return []
   }
@@ -90,25 +104,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(KEY, JSON.stringify(state.items))
   }, [state.items])
 
-  const itemCount = state.items.reduce((s, i) => s + i.quantity, 0)
-  const total = state.items.reduce((s, i) => s + i.product.price * i.quantity, 0)
+  const addItem     = useCallback((p: Product) => dispatch({ type: 'ADD', product: p }), [])
+  const removeItem  = useCallback((id: string) => dispatch({ type: 'REMOVE', id }), [])
+  const setQuantity = useCallback((id: string, quantity: number) => dispatch({ type: 'SET_QTY', id, quantity }), [])
+  const clearCart   = useCallback(() => dispatch({ type: 'CLEAR' }), [])
+  const openCart    = useCallback(() => dispatch({ type: 'OPEN' }), [])
+  const closeCart   = useCallback(() => dispatch({ type: 'CLOSE' }), [])
 
-  return (
-    <Ctx.Provider value={{
-      items: state.items,
-      isOpen: state.isOpen,
-      itemCount,
-      total,
-      addItem: p => dispatch({ type: 'ADD', product: p }),
-      removeItem: id => dispatch({ type: 'REMOVE', id }),
-      setQuantity: (id, quantity) => dispatch({ type: 'SET_QTY', id, quantity }),
-      clearCart: () => dispatch({ type: 'CLEAR' }),
-      openCart: () => dispatch({ type: 'OPEN' }),
-      closeCart: () => dispatch({ type: 'CLOSE' }),
-    }}>
-      {children}
-    </Ctx.Provider>
+  const itemCount = useMemo(
+    () => state.items.reduce((s, i) => s + i.quantity, 0),
+    [state.items]
   )
+  const total = useMemo(
+    () => state.items.reduce((s, i) => s + i.product.price * i.quantity, 0),
+    [state.items]
+  )
+
+  const value = useMemo<CartCtx>(() => ({
+    items: state.items,
+    isOpen: state.isOpen,
+    itemCount,
+    total,
+    addItem,
+    removeItem,
+    setQuantity,
+    clearCart,
+    openCart,
+    closeCart,
+  }), [state.items, state.isOpen, itemCount, total, addItem, removeItem, setQuantity, clearCart, openCart, closeCart])
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
 export function useCart(): CartCtx {
