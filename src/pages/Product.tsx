@@ -38,7 +38,7 @@ export function Product() {
   }
 
   return (
-    <main className="bg-[#162D22] min-h-screen">
+    <main className="section-forest min-h-screen">
 
       {/* Top section — gallery + details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
@@ -136,14 +136,14 @@ export function Product() {
       </div>
 
       {/* Pyramid section */}
-      <section ref={pyramidRef} className="py-24 px-8 lg:px-16 border-t border-[rgba(237,227,204,0.08)]">
+      <section ref={pyramidRef} className="section-cream py-24 px-8 lg:px-16 border-t border-[rgba(22,45,34,0.08)]">
         <h2
-          className="font-serif text-[#EDE3CC] leading-none mb-16"
+          className="font-serif text-[#162D22] leading-none mb-16"
           style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
         >
           The Pyramid
         </h2>
-        <FragrancePyramid notes={product.notes} />
+        <FragrancePyramid notes={product.notes} variant="cream" />
       </section>
 
     </main>
