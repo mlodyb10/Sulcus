@@ -8,14 +8,43 @@
   --font-sans: 'Space Grotesk', sans-serif;
 }
 
+@keyframes gradientDrift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@layer components {
+  .section-forest {
+    background: linear-gradient(
+      -45deg,
+      #0d1f16, #162D22, #1e3a28,
+      #0a1510, #162D22, #243d2e
+    );
+    background-size: 400% 400%;
+    animation: gradientDrift 14s ease infinite;
+  }
+
+  .section-cream {
+    background-color: #EDE3CC;
+    color: #162D22;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-forest {
+    animation: none;
+    background: #162D22;
+  }
+}
+
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background-color: var(--color-forest);
-  color: var(--color-cream);
+  color: #EDE3CC;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
