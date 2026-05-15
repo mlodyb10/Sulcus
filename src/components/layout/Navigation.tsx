@@ -26,7 +26,11 @@ export function Navigation() {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-30 px-8 lg:px-12 py-5 flex items-center justify-between transition-colors duration-500"
-      style={{ backgroundColor: scrolled ? '#162D22' : 'transparent' }}
+      style={{
+        backgroundColor: scrolled ? 'rgba(22,45,34,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+      }}
     >
       <Link
         to="/"
