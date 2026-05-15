@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { useCart } from '@/cart/CartContext'
@@ -6,7 +6,7 @@ import { useCart } from '@/cart/CartContext'
 export function Navigation() {
   const { itemCount, openCart } = useCart()
   const [scrolled, setScrolled] = useState(false)
-  const [prev, setPrev] = useState(itemCount)
+  const prevCountRef = useRef(itemCount)
   const [pulse, setPulse] = useState(false)
 
   useEffect(() => {
@@ -16,12 +16,12 @@ export function Navigation() {
   }, [])
 
   useEffect(() => {
-    if (itemCount > prev) {
+    if (itemCount > prevCountRef.current) {
       setPulse(true)
       setTimeout(() => setPulse(false), 600)
     }
-    setPrev(itemCount)
-  }, [itemCount, prev])
+    prevCountRef.current = itemCount
+  }, [itemCount])
 
   return (
     <nav

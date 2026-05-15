@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import { products } from '@/data/products'
@@ -17,10 +17,11 @@ export function Product() {
 
   const product = products.find(p => p.id === id)
 
-  if (!product) {
-    navigate('/', { replace: true })
-    return null
-  }
+  useEffect(() => {
+    if (!product) navigate('/', { replace: true })
+  }, [product, navigate])
+
+  if (!product) return null
 
   function handleAdd() {
     addItem(product!)
