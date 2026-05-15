@@ -22,7 +22,7 @@ function RevealLine({ text }: { text: string }) {
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 1.1, ease: [0.25, 0.1, 0.25, 1] }}
-      className="font-serif text-3xl lg:text-[2.8rem] leading-snug tracking-wide"
+      className="font-serif text-[#162D22] text-3xl lg:text-[2.8rem] leading-snug tracking-wide"
     >
       {text}
     </motion.p>
@@ -117,7 +117,7 @@ export function Home() {
 
       {/* Kolekcja */}
       <section ref={collectionRef} className="section-forest py-24 px-8 lg:px-12">
-        <h2 className="font-serif text-4xl mb-14 tracking-wide">Kolekcja</h2>
+        <h2 className="font-serif text-[#EDE3CC] text-4xl mb-14 tracking-wide">Kolekcja</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 max-w-4xl">
           {products.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
