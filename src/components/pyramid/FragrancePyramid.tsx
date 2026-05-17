@@ -24,21 +24,21 @@ const T2Y = APY + 2 * PH / 3
 
 const TIERS = [
   {
-    key: 'top'   as const,
-    label: 'Nuty głowy',
-    points: `${APX},${APY} ${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y}`,
+    key:     'top'   as const,
+    label:   'Nuty głowy',
+    points:  `${APX},${APY} ${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y}`,
     opacity: 0.40,
   },
   {
-    key: 'heart' as const,
-    label: 'Nuty serca',
-    points: `${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y} ${rX(T2Y)},${T2Y} ${lX(T2Y)},${T2Y}`,
+    key:     'heart' as const,
+    label:   'Nuty serca',
+    points:  `${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y} ${rX(T2Y)},${T2Y} ${lX(T2Y)},${T2Y}`,
     opacity: 0.60,
   },
   {
-    key: 'base'  as const,
-    label: 'Nuty bazy',
-    points: `${lX(T2Y)},${T2Y} ${rX(T2Y)},${T2Y} ${APX + BASE_HALF},${BASE_Y} ${APX - BASE_HALF},${BASE_Y}`,
+    key:     'base'  as const,
+    label:   'Nuty bazy',
+    points:  `${lX(T2Y)},${T2Y} ${rX(T2Y)},${T2Y} ${APX + BASE_HALF},${BASE_Y} ${APX - BASE_HALF},${BASE_Y}`,
     opacity: 0.90,
   },
 ]
@@ -56,20 +56,19 @@ export function FragrancePyramid({ notes }: Props) {
   const selectedTier = TIERS.find(t => t.key === selected)
 
   return (
-    <div className="flex flex-col lg:flex-row items-start gap-16 w-full min-h-[480px]">
+    <div className="flex flex-col lg:flex-row items-start gap-16 w-full">
 
-      {/* Pyramid */}
-      <motion.div
-        layout
-        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        className="flex-shrink-0 flex items-center justify-center"
-        style={{ width: selected ? 'clamp(160px, 30%, 280px)' : '100%' }}
-      >
-        <svg viewBox="0 0 280 560" className="w-full" style={{ maxWidth: selected ? 280 : 360 }}>
+      {/* ── Pyramid — fixed width, always left ── */}
+      <div className="flex-shrink-0 w-full lg:w-72 xl:w-80">
+        <svg
+          viewBox="0 0 280 560"
+          className="w-full"
+          style={{ maxWidth: 320 }}
+        >
           {TIERS.map(tier => {
             const isSelected = selected === tier.key
-            const isDimmed  = selected !== null && !isSelected
-            const fill = `rgba(${FG},${isDimmed ? tier.opacity * 0.35 : tier.opacity})`
+            const isDimmed   = selected !== null && !isSelected
+            const fill = `rgba(${FG},${isDimmed ? tier.opacity * 0.3 : tier.opacity})`
 
             return (
               <polygon
@@ -79,53 +78,72 @@ export function FragrancePyramid({ notes }: Props) {
                 stroke={`rgba(${FG},0.12)`}
                 strokeWidth="0.5"
                 onClick={() => handleTier(tier.key)}
-                style={{
-                  cursor: 'pointer',
-                  transition: 'fill 0.35s',
-                  outline: 'none',
-                }}
+                style={{ cursor: 'pointer', transition: 'fill 0.4s ease' }}
               />
             )
           })}
         </svg>
-      </motion.div>
+      </div>
 
-      {/* Description panel */}
-      <AnimatePresence mode="wait">
-        {selected && selectedTier && (
-          <motion.div
-            key={selected}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 16 }}
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="flex-1 pt-2"
-          >
-            <p className="text-[10px] uppercase tracking-[0.35em] mb-10"
-               style={{ color: `rgba(${FG},0.35)` }}>
-              {selectedTier.label}
-            </p>
+      {/* ── Panel — animates in/out ── */}
+      <div className="flex-1 min-h-[400px] flex items-start pt-4">
+        <AnimatePresence mode="wait">
+          {selected && selectedTier ? (
+            <motion.div
+              key={selected}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              className="w-full"
+            >
+              <p
+                className="text-[10px] uppercase tracking-[0.35em] mb-10"
+                style={{ color: `rgba(${FG},0.35)` }}
+              >
+                {selectedTier.label}
+              </p>
 
-            <div className="space-y-10">
-              {notes[selected].map(note => (
-                <div key={note.name}>
-                  <h4 className="font-serif text-[#EDE3CC] text-2xl leading-tight mb-1">
-                    {note.name}
-                  </h4>
-                  <p className="text-[10px] tracking-[0.2em] mb-2"
-                     style={{ color: `rgba(${FG},0.3)` }}>
-                    {note.origin}
-                  </p>
-                  <p className="text-sm leading-relaxed"
-                     style={{ color: `rgba(${FG},0.6)` }}>
-                    {note.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="space-y-10">
+                {notes[selected].map((note: Note) => (
+                  <div key={note.name}>
+                    <h4
+                      className="font-serif text-2xl leading-tight mb-1"
+                      style={{ color: `rgba(${FG},0.95)` }}
+                    >
+                      {note.name}
+                    </h4>
+                    <p
+                      className="text-[10px] tracking-[0.2em] mb-2"
+                      style={{ color: `rgba(${FG},0.3)` }}
+                    >
+                      {note.origin}
+                    </p>
+                    <p
+                      className="text-sm leading-relaxed max-w-sm"
+                      style={{ color: `rgba(${FG},0.6)` }}
+                    >
+                      {note.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.p
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-sm tracking-wide self-center"
+              style={{ color: `rgba(${FG},0.2)` }}
+            >
+              Kliknij sekcję piramidy aby odkryć nuty
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
 
     </div>
   )
