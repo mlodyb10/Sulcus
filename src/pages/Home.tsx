@@ -48,31 +48,12 @@ function ProductCard({ product }: { product: Product }) {
       className="cursor-pointer group relative overflow-hidden"
       style={{ aspectRatio: '3/4' }}
     >
-      {/* Background */}
-      <div
-        className="absolute inset-0 transition-all duration-700"
-        style={{
-          background: 'linear-gradient(160deg, #0a1810 0%, #162D22 100%)',
-          filter: 'brightness(1)',
-        }}
+      {/* Product image */}
+      <img
+        src={`/${product.id}.jpeg`}
+        alt={product.name}
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:brightness-[1.12] group-hover:scale-[1.03]"
       />
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-        style={{
-          background: 'linear-gradient(160deg, #0d1f14 0%, #1e3a28 100%)',
-          filter: 'brightness(1.15)',
-        }}
-      />
-
-      {/* Watermark letter */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
-        <span
-          className="font-serif leading-none select-none text-[#EDE3CC]"
-          style={{ fontSize: '40vw', opacity: 0.06 }}
-        >
-          {product.name[0]}
-        </span>
-      </div>
 
       {/* Bottom info — always visible */}
       <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
@@ -111,19 +92,20 @@ export function Home() {
   return (
     <main>
       {/* Hero */}
-      <section className="section-forest h-screen flex flex-col justify-center relative overflow-hidden">
-        {/* Grain overlay */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          xmlns="http://www.w3.org/2000/svg"
-          style={{ opacity: 0.04 }}
+      <section className="h-screen flex flex-col justify-center relative overflow-hidden bg-[#0a0a0a]">
+        {/* Video background */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
         >
-          <filter id="hero-grain">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch" />
-            <feColorMatrix type="saturate" values="0" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#hero-grain)" />
-        </svg>
+          <source src="/Hero.mp4" type="video/mp4" />
+        </video>
+
+        {/* Dark overlay for text legibility */}
+        <div className="absolute inset-0 bg-[#162D22]/40" />
 
         <div className="relative z-10 flex flex-col items-start" style={{ paddingLeft: '6vw' }}>
           <motion.h1
