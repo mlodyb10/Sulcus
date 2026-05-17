@@ -104,21 +104,23 @@ export function Product() {
 
           <h1
             className="font-serif text-[#EDE3CC] leading-none mb-6"
-            style={{ fontSize: 'clamp(4rem, 8vw, 7rem)' }}
+            style={{ fontSize: 'clamp(4rem, 11vw, 12rem)' }}
           >
             {product.name}
           </h1>
 
-          <p className="text-[rgba(237,227,204,0.6)] text-base leading-relaxed mb-8 max-w-xs">
+          <p className="text-[rgba(237,227,204,0.7)] text-[1.1rem] leading-relaxed italic mb-8 max-w-xs">
             {product.description}
           </p>
 
-          <p className="font-serif text-[#EDE3CC] text-3xl mb-10">{product.price} PLN</p>
+          <p className="font-serif text-[#EDE3CC] text-3xl mb-6">{product.price} PLN</p>
+
+          <div className="w-full border-t border-[rgba(237,227,204,0.2)] mb-6" />
 
           <button
             type="button"
             onClick={handleAdd}
-            className="py-4 border border-[rgba(237,227,204,0.5)] text-[#EDE3CC] text-[10px] tracking-[0.4em] uppercase hover:bg-[#EDE3CC] hover:text-[#162D22] transition-all duration-200 mb-8"
+            className="self-start py-4 px-12 border border-[rgba(237,227,204,0.5)] text-[#EDE3CC] text-[10px] tracking-[0.4em] uppercase hover:bg-[#EDE3CC] hover:text-[#162D22] transition-all duration-200 mb-8"
           >
             {added ? 'Added ✓' : 'Add to Bag'}
           </button>
@@ -136,14 +138,14 @@ export function Product() {
       </div>
 
       {/* Pyramid section */}
-      <section ref={pyramidRef} className="section-cream py-24 px-8 lg:px-16 border-t border-[rgba(22,45,34,0.08)]">
+      <section ref={pyramidRef} className="section-forest py-24 px-8 lg:px-16 border-t border-[rgba(237,227,204,0.08)]">
         <h2
-          className="font-serif text-[#162D22] leading-none mb-16"
+          className="font-serif text-[#EDE3CC] leading-none mb-16"
           style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
         >
           The Pyramid
         </h2>
-        <FragrancePyramid notes={product.notes} variant="cream" />
+        <FragrancePyramid notes={product.notes} />
       </section>
 
     </main>
