@@ -65,7 +65,7 @@ export function FragrancePyramid({ notes }: Props) {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col lg:flex-row items-center gap-16">
+      <div className="flex flex-col lg:flex-row items-start gap-16">
 
         {/* ── SVG: pyramid + connecting lines + note labels ── */}
         <div className="flex justify-center flex-shrink-0">
@@ -132,8 +132,8 @@ export function FragrancePyramid({ notes }: Props) {
           </svg>
         </div>
 
-        {/* ── Description panel ── */}
-        <div className="w-full lg:w-1/2 flex items-center lg:min-h-[500px]">
+        {/* ── Description panel — fixed width prevents layout shift ── */}
+        <div className="flex-shrink-0 w-72" style={{ paddingTop: '60px' }}>
           <AnimatePresence mode="wait">
             {selectedNote ? (
               <motion.div
