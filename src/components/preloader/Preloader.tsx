@@ -16,8 +16,29 @@ const FRAMES = [
 export function Preloader({ onComplete }: Props) {
   const [frame, setFrame] = useState(0)
   const [exiting, setExiting] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  // Preload all images before starting the animation
+  useEffect(() => {
+    let loaded = 0
+    const imgs = FRAMES.map(src => {
+      const img = new Image()
+      img.onload = () => {
+        loaded++
+        if (loaded === FRAMES.length) setReady(true)
+      }
+      img.onerror = () => {
+        loaded++
+        if (loaded === FRAMES.length) setReady(true)
+      }
+      img.src = src
+      return img
+    })
+    return () => { imgs.forEach(img => { img.onload = null; img.onerror = null }) }
+  }, [])
 
   useEffect(() => {
+    if (!ready) return
     if (frame < FRAMES.length - 1) {
       const t = setTimeout(() => setFrame(f => f + 1), 180)
       return () => clearTimeout(t)
@@ -25,7 +46,7 @@ export function Preloader({ onComplete }: Props) {
       const t = setTimeout(() => setExiting(true), 400)
       return () => clearTimeout(t)
     }
-  }, [frame])
+  }, [frame, ready])
 
   return (
     <AnimatePresence onExitComplete={() => {
