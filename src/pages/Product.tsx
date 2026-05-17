@@ -148,7 +148,7 @@ export function Product() {
       </div>
 
       {/* Pyramid section */}
-      <section ref={pyramidRef} className="section-forest py-24 px-8 lg:px-16 border-t border-[rgba(237,227,204,0.08)]">
+      <section ref={pyramidRef} className="section-forest pt-32 pb-24 px-8 lg:px-16 border-t border-[rgba(237,227,204,0.08)]">
         <h2
           className="font-serif text-[#EDE3CC] leading-none mb-16"
           style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}

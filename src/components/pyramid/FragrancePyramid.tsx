@@ -49,7 +49,7 @@ const TIERS = [
 ]
 
 const FG = '237,227,204'
-const SVG_STYLE = { height: 'clamp(600px, 65vh, 720px)', width: 'auto', flexShrink: 0 as const }
+const SVG_STYLE = { height: 'min(70vh, 700px)', width: 'auto', flexShrink: 0 as const }
 
 // ── Component ─────────────────────────────────────────────────────────────
 export function FragrancePyramid({ notes }: Props) {
@@ -62,7 +62,7 @@ export function FragrancePyramid({ notes }: Props) {
       setSelectedNote(null)
     } else {
       setSelected(key)
-      setSelectedNote(null)
+      setSelectedNote(notes[key][0])  // auto-select first note
     }
   }
 
@@ -114,7 +114,7 @@ export function FragrancePyramid({ notes }: Props) {
         {/* HTML labels — absolutely positioned to match tier midY percentages */}
         <div
           className="relative pl-5 select-none"
-          style={{ height: 'clamp(600px, 65vh, 720px)', width: 200 }}
+          style={{ height: 'min(70vh, 700px)', width: 200 }}
         >
           {TIERS.map(tier => {
             const topPct    = (tier.midY / SVG_H) * 100
