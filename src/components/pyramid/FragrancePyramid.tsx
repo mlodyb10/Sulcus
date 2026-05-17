@@ -17,22 +17,22 @@ interface Props {
 
 // ── Pyramid geometry (SVG coordinate space) ──────────────────────────────
 const APX = 140           // apex x (centre)
-const APY = 20            // apex y (top)
-const BASE_Y = 460        // base y (bottom)
+const APY = 60            // apex y — pushed down to leave room for top labels
+const BASE_Y = 500        // base y (bottom)
 const BASE_HALF = 140     // half-width of base (so full width = 280)
 const PH = BASE_Y - APY   // pyramid height in SVG units = 440
 
 function rX(y: number) { return APX + (y - APY) * BASE_HALF / PH }  // right edge at y
 function lX(y: number) { return APX - (y - APY) * BASE_HALF / PH }  // left  edge at y
 
-const T1Y = APY + PH / 3        // top/heart boundary  ≈ 167
-const T2Y = APY + (2 * PH) / 3  // heart/base boundary ≈ 313
+const T1Y = APY + PH / 3        // top/heart boundary  ≈ 207
+const T2Y = APY + (2 * PH) / 3  // heart/base boundary ≈ 353
 
-// Y-positions for 3 notes within each tier
+// Y-positions for 3 notes within each tier — spread evenly
 const NOTE_Y = {
-  top:   [APY + PH * 0.10, APY + PH * 0.17, APY + PH * 0.26] as const, // ≈ 64, 95, 134
-  heart: [APY + PH * 0.41, APY + PH * 0.50, APY + PH * 0.60] as const, // ≈ 200, 240, 284
-  base:  [APY + PH * 0.73, APY + PH * 0.83, APY + PH * 0.93] as const, // ≈ 341, 385, 429
+  top:   [APY + PH * 0.08, APY + PH * 0.16, APY + PH * 0.25] as const,
+  heart: [APY + PH * 0.41, APY + PH * 0.50, APY + PH * 0.60] as const,
+  base:  [APY + PH * 0.73, APY + PH * 0.83, APY + PH * 0.93] as const,
 }
 
 const LINE_END_X = 298  // where connecting line ends (before label)
@@ -101,7 +101,7 @@ export function FragrancePyramid({ notes, variant = 'forest' }: Props) {
       {/* ── Left half: SVG pyramid + labels ────────────────────────────── */}
       <div className="w-full lg:w-1/2">
         <svg
-          viewBox="0 0 540 490"
+          viewBox="0 0 540 530"
           className="w-full"
           style={{ minHeight: '400px' }}
           aria-label="Fragrance pyramid"

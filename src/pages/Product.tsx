@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import { products } from '@/data/products'
@@ -15,8 +15,9 @@ export function Product() {
 
   const product = products.find(p => p.id === id)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
   }, [])
 
   useEffect(() => {
