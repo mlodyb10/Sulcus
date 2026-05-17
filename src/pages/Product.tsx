@@ -5,8 +5,6 @@ import { products } from '@/data/products'
 import { FragrancePyramid } from '@/components/pyramid/FragrancePyramid'
 import { useCart } from '@/cart/CartContext'
 
-const THUMB_COUNT = 4
-
 export function Product() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -47,19 +45,18 @@ export function Product() {
         <div className="flex gap-4 p-8 lg:p-12 lg:pt-24">
           {/* Thumbnails */}
           <div className="flex flex-col gap-2 pt-1">
-            {Array.from({ length: THUMB_COUNT }).map((_, i) => (
+            {[`/${product.id}_1.jpeg`, `/${product.id}.jpeg`].map((src, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setActiveThumb(i)}
-                className={`w-12 h-16 border transition-colors duration-200 flex items-center justify-center ${
+                className={`w-12 h-16 border transition-colors duration-200 overflow-hidden ${
                   activeThumb === i
                     ? 'border-[rgba(237,227,204,0.5)]'
                     : 'border-[rgba(237,227,204,0.12)] hover:border-[rgba(237,227,204,0.3)]'
                 }`}
-                style={{ background: 'linear-gradient(160deg, #0a1810, #162D22)' }}
               >
-                <span className="font-serif text-[rgba(237,227,204,0.12)] text-sm">{product.name[0]}</span>
+                <img src={src} alt="" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
@@ -67,19 +64,15 @@ export function Product() {
           {/* Main image */}
           <div className="flex-1 relative overflow-hidden border border-[rgba(237,227,204,0.08)]"
             style={{ minHeight: '70vh' }}>
-            <motion.div
+            <motion.img
               key={activeThumb}
+              src={activeThumb === 0 ? `/${product.id}_1.jpeg` : `/${product.id}.jpeg`}
+              alt={product.name}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ background: 'linear-gradient(160deg, #0a1810 0%, #162D22 100%)' }}
-            >
-              <span className="font-serif text-[rgba(237,227,204,0.05)] select-none"
-                style={{ fontSize: 'clamp(6rem, 18vw, 14rem)', lineHeight: 1 }}>
-                {product.name[0]}
-              </span>
-            </motion.div>
+              className="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
         </div>
 
