@@ -63,10 +63,12 @@ export function CartDrawer() {
               ) : (
                 items.map(item => (
                   <div key={item.product.id} className="flex gap-5">
-                    <div className="w-16 h-20 bg-[rgba(237,227,204,0.05)] border border-[rgba(237,227,204,0.1)] shrink-0 flex items-center justify-center">
-                      <span className="font-serif text-[rgba(237,227,204,0.15)] text-2xl">
-                        {item.product.name[0]}
-                      </span>
+                    <div className="w-16 h-20 shrink-0 overflow-hidden border border-[rgba(237,227,204,0.1)]">
+                      <img
+                        src={`/${item.product.id}_1.jpeg`}
+                        alt={item.product.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-serif text-[#EDE3CC] text-lg leading-tight">{item.product.name}</p>
