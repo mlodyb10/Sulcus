@@ -45,7 +45,12 @@ export function Product() {
         <div className="flex gap-4 p-8 lg:p-12 lg:pt-24">
           {/* Thumbnails */}
           <div className="flex flex-col gap-2 pt-1">
-            {[`/${product.id}_1.jpeg`, `/${product.id}.jpeg`].map((src, i) => (
+            {[
+              `/${product.id}_1.jpeg`,
+              `/${product.id}_2.jpeg`,
+              `/${product.id}_3.jpeg`,
+              `/${product.id}.jpeg`,
+            ].map((src, i) => (
               <button
                 key={i}
                 type="button"
@@ -66,7 +71,12 @@ export function Product() {
             style={{ minHeight: '70vh' }}>
             <motion.img
               key={activeThumb}
-              src={activeThumb === 0 ? `/${product.id}_1.jpeg` : `/${product.id}.jpeg`}
+              src={[
+                `/${product.id}_1.jpeg`,
+                `/${product.id}_2.jpeg`,
+                `/${product.id}_3.jpeg`,
+                `/${product.id}.jpeg`,
+              ][activeThumb]}
               alt={product.name}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
