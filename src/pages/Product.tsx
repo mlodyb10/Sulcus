@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { products } from '@/data/products'
 import { FragrancePyramid } from '@/components/pyramid/FragrancePyramid'
 import { useCart } from '@/cart/CartContext'
+import { lenisInstance } from '@/components/layout/LenisProvider'
 
 export function Product() {
   const { id } = useParams<{ id: string }>()
@@ -16,8 +17,11 @@ export function Product() {
   const product = products.find(p => p.id === id)
 
   useLayoutEffect(() => {
-    window.scrollTo(0, 0)
-    document.documentElement.scrollTop = 0
+    if (lenisInstance) {
+      lenisInstance.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
   }, [])
 
   useEffect(() => {
