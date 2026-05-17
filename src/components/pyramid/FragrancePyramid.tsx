@@ -58,12 +58,11 @@ export function FragrancePyramid({ notes }: Props) {
   return (
     <div className="flex flex-col lg:flex-row items-start gap-16 w-full">
 
-      {/* ── Pyramid — fixed width, always left ── */}
-      <div className="flex-shrink-0 w-full lg:w-72 xl:w-80">
+      {/* ── Pyramid — centered, minimum 500px tall ── */}
+      <div className="flex-shrink-0 w-full lg:w-1/2 flex items-center justify-center">
         <svg
           viewBox="0 0 280 560"
-          className="w-full"
-          style={{ maxWidth: 320 }}
+          style={{ height: 'clamp(500px, 60vh, 700px)', width: 'auto' }}
         >
           {TIERS.map(tier => {
             const isSelected = selected === tier.key
