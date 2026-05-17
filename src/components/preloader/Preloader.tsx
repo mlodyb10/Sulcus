@@ -59,25 +59,21 @@ export function Preloader({ onComplete }: Props) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-[#0a0a0a]"
+          className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
+          style={{
+            backgroundColor: '#0a0a0a',
+            backgroundImage: ready ? `url('${FRAMES[frame]}')` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
-          <motion.img
-            key={frame}
-            src={FRAMES[frame]}
-            alt=""
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.08 }}
-            className="absolute inset-0 w-full h-full object-cover"
-            aria-hidden
-          />
-
           <motion.span
             key={`label-${frame}`}
             initial={{ opacity: 0.2 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.12 }}
-            className="relative z-10 font-sans text-[#EDE3CC] tracking-[0.6em] text-xs uppercase select-none mix-blend-screen"
+            className="relative z-10 font-sans text-[#EDE3CC] tracking-[0.6em] text-xs uppercase select-none"
+            style={{ mixBlendMode: 'screen' }}
           >
             SULCUS
           </motion.span>
