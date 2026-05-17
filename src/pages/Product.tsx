@@ -16,6 +16,10 @@ export function Product() {
   const product = products.find(p => p.id === id)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     if (!product) navigate('/', { replace: true })
   }, [product, navigate])
 
@@ -49,7 +53,6 @@ export function Product() {
               `/${product.id}_1.jpeg`,
               `/${product.id}_2.jpeg`,
               `/${product.id}_3.jpeg`,
-              `/${product.id}.jpeg`,
             ].map((src, i) => (
               <button
                 key={i}
@@ -75,7 +78,6 @@ export function Product() {
                 `/${product.id}_1.jpeg`,
                 `/${product.id}_2.jpeg`,
                 `/${product.id}_3.jpeg`,
-                `/${product.id}.jpeg`,
               ][activeThumb]}
               alt={product.name}
               initial={{ opacity: 0 }}
