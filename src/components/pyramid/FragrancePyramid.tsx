@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Note } from '../../data/products'
 
@@ -13,216 +13,166 @@ interface Props {
 }
 
 // ── Geometry ──────────────────────────────────────────────────────────────
-const APX = 140, APY = 40, BASE_Y = 580, BASE_HALF = 140
-const PH = BASE_Y - APY  // 540
+const APX = 160, APY = 30, BASE_Y = 550, BASE_HALF = 160
+const PH = BASE_Y - APY  // 520
 
 function rX(y: number) { return APX + (y - APY) * BASE_HALF / PH }
 function lX(y: number) { return APX - (y - APY) * BASE_HALF / PH }
 
-const T1Y = APY + PH / 3   // 220
-const T2Y = APY + 2 * PH / 3  // 400
+const T1Y = APY + PH / 3   // ≈ 203
+const T2Y = APY + 2 * PH / 3  // ≈ 377
 
-const SVG_H = 620
+// Y-positions for 3 notes within each tier
+const NOTE_Y = {
+  top:   [APY + PH * 0.09, APY + PH * 0.17, APY + PH * 0.25] as const,
+  heart: [APY + PH * 0.41, APY + PH * 0.50, APY + PH * 0.60] as const,
+  base:  [APY + PH * 0.73, APY + PH * 0.83, APY + PH * 0.93] as const,
+}
+
+const LINE_END_X = 350
+const LABEL_X    = 358
+const FG = '237,227,204'
 
 const TIERS = [
-  {
-    key:    'top'   as const,
-    label:  'Nuty głowy',
-    points: `${APX},${APY} ${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y}`,
-    opacity: 0.40,
-    midY:   Math.round((APY + T1Y) / 2),   // 130
-  },
-  {
-    key:    'heart' as const,
-    label:  'Nuty serca',
-    points: `${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y} ${rX(T2Y)},${T2Y} ${lX(T2Y)},${T2Y}`,
-    opacity: 0.60,
-    midY:   Math.round((T1Y + T2Y) / 2),   // 310
-  },
-  {
-    key:    'base'  as const,
-    label:  'Nuty bazy',
-    points: `${lX(T2Y)},${T2Y} ${rX(T2Y)},${T2Y} ${APX + BASE_HALF},${BASE_Y} ${APX - BASE_HALF},${BASE_Y}`,
-    opacity: 0.90,
-    midY:   Math.round((T2Y + BASE_Y) / 2), // 490
-  },
+  { key: 'top'   as const, fill: `rgba(${FG},0.40)` },
+  { key: 'heart' as const, fill: `rgba(${FG},0.60)` },
+  { key: 'base'  as const, fill: `rgba(${FG},0.90)` },
 ]
 
-const FG = '237,227,204'
-const SVG_STYLE = { height: 'min(70vh, 700px)', width: 'auto', flexShrink: 0 as const }
+const TIER_POINTS = {
+  top:   `${APX},${APY} ${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y}`,
+  heart: `${lX(T1Y)},${T1Y} ${rX(T1Y)},${T1Y} ${rX(T2Y)},${T2Y} ${lX(T2Y)},${T2Y}`,
+  base:  `${lX(T2Y)},${T2Y} ${rX(T2Y)},${T2Y} ${APX+BASE_HALF},${BASE_Y} ${APX-BASE_HALF},${BASE_Y}`,
+}
 
 // ── Component ─────────────────────────────────────────────────────────────
 export function FragrancePyramid({ notes }: Props) {
-  const [selected, setSelected] = useState<'top' | 'heart' | 'base' | null>(null)
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
 
-  function handleTier(key: 'top' | 'heart' | 'base') {
-    if (selected === key) {
-      setSelected(null)
+  const prevNotesRef = useRef(notes)
+  useEffect(() => {
+    if (prevNotesRef.current !== notes) {
       setSelectedNote(null)
-    } else {
-      setSelected(key)
-      setSelectedNote(notes[key][0])  // auto-select first note
+      prevNotesRef.current = notes
     }
-  }
+  }, [notes])
 
-  function handleNote(e: React.MouseEvent, note: Note) {
-    e.stopPropagation()
-    setSelectedNote(prev => prev?.name === note.name ? null : note)
-  }
+  const activeTier = selectedNote
+    ? notes.top.some(n => n.name === selectedNote.name) ? 'top'
+      : notes.heart.some(n => n.name === selectedNote.name) ? 'heart'
+      : 'base'
+    : null
 
   return (
-    <div className="w-full flex flex-col items-center gap-12">
+    <div className="w-full flex justify-center">
+      <div className="flex flex-col lg:flex-row items-start gap-16 w-full max-w-5xl">
 
-      {/* ── Row: pyramid + labels ── */}
-      <div className="flex items-start">
-
-        {/* SVG — pyramid + connecting line stubs */}
-        <svg viewBox={`0 0 320 ${SVG_H}`} style={SVG_STYLE}>
-          {TIERS.map(tier => {
-            const isActive = selected === tier.key
-            const isDimmed = selected !== null && !isActive
-            const fill     = `rgba(${FG},${isDimmed ? tier.opacity * 0.28 : tier.opacity})`
-            const rx       = rX(tier.midY)
-
-            return (
-              <g
-                key={tier.key}
-                onClick={() => handleTier(tier.key)}
-                style={{ cursor: 'pointer' }}
-              >
+        {/* ── SVG: pyramid + connecting lines + note labels ── */}
+        <div className="w-full lg:w-1/2 flex justify-center">
+          <svg
+            viewBox="0 0 620 590"
+            style={{ width: '100%', minHeight: '500px', maxHeight: '680px' }}
+          >
+            {/* Tier polygons */}
+            {TIERS.map(tier => {
+              const isDimmed = activeTier !== null && activeTier !== tier.key
+              const opacity  = isDimmed ? 0.2 : 1
+              return (
                 <polygon
-                  points={tier.points}
-                  fill={fill}
-                  stroke={`rgba(${FG},0.12)`}
+                  key={tier.key}
+                  points={TIER_POINTS[tier.key]}
+                  fill={tier.fill}
+                  stroke={`rgba(${FG},0.1)`}
                   strokeWidth="0.5"
-                  style={{ transition: 'fill 0.35s ease' }}
+                  style={{ opacity, transition: 'opacity 0.35s' }}
                 />
-                {/* Connecting line stub */}
-                <line
-                  x1={rx + 4} y1={tier.midY}
-                  x2={312}    y2={tier.midY}
-                  stroke={`rgba(${FG},${isActive ? 0.35 : 0.15})`}
-                  strokeWidth="0.5"
-                  style={{ transition: 'stroke 0.35s ease' }}
-                />
-              </g>
-            )
-          })}
-        </svg>
+              )
+            })}
 
-        {/* HTML labels — absolutely positioned to match tier midY percentages */}
-        <div
-          className="relative pl-5 select-none"
-          style={{ height: 'min(70vh, 700px)', width: 200 }}
-        >
-          {TIERS.map(tier => {
-            const topPct    = (tier.midY / SVG_H) * 100
-            const isActive  = selected === tier.key
+            {/* Note labels + connecting lines */}
+            {(['top', 'heart', 'base'] as const).map(tierKey =>
+              notes[tierKey].map((note, i) => {
+                const y       = NOTE_Y[tierKey][i]
+                const rx      = rX(y)
+                const isActive = selectedNote?.name === note.name
+                const tc      = isActive ? `rgba(${FG},0.95)` : `rgba(${FG},0.40)`
+                const lc      = isActive ? `rgba(${FG},0.50)` : `rgba(${FG},0.15)`
 
-            return (
-              <div
-                key={tier.key}
-                className="absolute"
-                style={{ top: `${topPct}%`, transform: 'translateY(-50%)', left: 0, right: 0 }}
-              >
-                {/* Tier label button */}
-                <button
-                  type="button"
-                  onClick={() => handleTier(tier.key)}
-                  className="text-left w-full"
-                >
-                  <span
-                    className="text-[10px] uppercase tracking-[0.3em] transition-colors duration-300"
-                    style={{ color: isActive ? `rgba(${FG},0.8)` : `rgba(${FG},0.35)` }}
+                return (
+                  <g
+                    key={note.name}
+                    onClick={() => setSelectedNote(prev => prev?.name === note.name ? null : note)}
+                    style={{ cursor: 'pointer' }}
+                    role="button"
+                    aria-pressed={isActive}
                   >
-                    {tier.label}
-                  </span>
-                </button>
-
-                {/* Expandable note list */}
-                <AnimatePresence>
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                      className="overflow-hidden"
+                    {/* Dot */}
+                    <circle cx={rx} cy={y} r="2.5" fill={lc} style={{ transition: 'fill 0.25s' }} />
+                    {/* Line */}
+                    <line
+                      x1={rx + 5} y1={y} x2={LINE_END_X} y2={y}
+                      stroke={lc} strokeWidth="0.5"
+                      style={{ transition: 'stroke 0.25s' }}
+                    />
+                    {/* Label */}
+                    <text
+                      x={LABEL_X} y={y + 4}
+                      fill={tc}
+                      fontSize="13"
+                      fontFamily="'Space Grotesk', sans-serif"
+                      letterSpacing="0.04em"
+                      style={{ transition: 'fill 0.25s' }}
                     >
-                      <div className="pt-2 space-y-1">
-                        {notes[tier.key].map(note => {
-                          const isNoteActive = selectedNote?.name === note.name
-                          return (
-                            <button
-                              key={note.name}
-                              type="button"
-                              onClick={(e) => handleNote(e, note)}
-                              className="block text-left text-sm tracking-wide transition-colors duration-200"
-                              style={{ color: isNoteActive ? `rgba(${FG},0.95)` : `rgba(${FG},0.5)` }}
-                            >
-                              {note.name}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )
-          })}
+                      {note.name}
+                    </text>
+                  </g>
+                )
+              })
+            )}
+          </svg>
         </div>
-      </div>
 
-      {/* ── Description panel — below pyramid ── */}
-      <div className="w-full max-w-lg" style={{ minHeight: '120px' }}>
-        <AnimatePresence mode="wait">
-          {selectedNote ? (
-            <motion.div
-              key={selectedNote.name}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <h4
-                className="font-serif text-3xl leading-tight mb-2"
-                style={{ color: `rgba(${FG},0.95)` }}
+        {/* ── Description panel ── */}
+        <div className="w-full lg:w-1/2 flex items-center lg:min-h-[500px]">
+          <AnimatePresence mode="wait">
+            {selectedNote ? (
+              <motion.div
+                key={selectedNote.name}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
               >
-                {selectedNote.name}
-              </h4>
-              <p
-                className="text-[10px] tracking-[0.25em] mb-4"
-                style={{ color: `rgba(${FG},0.3)` }}
+                <p className="text-[10px] uppercase tracking-[0.3em] mb-4"
+                   style={{ color: `rgba(${FG},0.35)` }}>
+                  {selectedNote.origin}
+                </p>
+                <h3 className="font-serif text-4xl lg:text-5xl leading-tight mb-5"
+                    style={{ color: `rgba(${FG},0.95)` }}>
+                  {selectedNote.name}
+                </h3>
+                <p className="text-base leading-relaxed max-w-sm"
+                   style={{ color: `rgba(${FG},0.6)` }}>
+                  {selectedNote.description}
+                </p>
+              </motion.div>
+            ) : (
+              <motion.p
+                key="hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="text-sm"
+                style={{ color: `rgba(${FG},0.2)` }}
               >
-                {selectedNote.origin}
-              </p>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: `rgba(${FG},0.6)` }}
-              >
-                {selectedNote.description}
-              </p>
-            </motion.div>
-          ) : (
-            <motion.p
-              key="hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="text-sm"
-              style={{ color: `rgba(${FG},0.2)` }}
-            >
-              {selected
-                ? 'Wybierz nutę aby poznać jej historię'
-                : 'Kliknij poziom piramidy aby odkryć nuty'}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
+                Wybierz nutę aby poznać jej historię
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
 
+      </div>
     </div>
   )
 }
