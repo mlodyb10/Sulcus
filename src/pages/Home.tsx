@@ -34,6 +34,16 @@ function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate()
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  function handleMouseEnter() {
+    videoRef.current?.play()
+  }
+
+  function handleMouseLeave() {
+    const v = videoRef.current
+    if (v) { v.pause(); v.currentTime = 0 }
+  }
 
   function handleAdd(e: React.MouseEvent) {
     e.stopPropagation()
@@ -45,14 +55,26 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="cursor-pointer group relative overflow-hidden"
       style={{ aspectRatio: '3/4' }}
     >
-      {/* Product image */}
+      {/* Static image */}
       <img
         src={`/${product.id}.jpeg`}
         alt={product.name}
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:brightness-[1.12] group-hover:scale-[1.03]"
+        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+      />
+
+      {/* Video — plays on hover */}
+      <video
+        ref={videoRef}
+        src={`/${product.id}_video.mp4`}
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
       />
 
       {/* Bottom info — always visible */}
