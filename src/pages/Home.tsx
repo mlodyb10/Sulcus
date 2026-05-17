@@ -14,15 +14,16 @@ const FILOSOFIA = [
 
 function RevealLine({ text }: { text: string }) {
   const ref = useRef<HTMLParagraphElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-12% 0px' })
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' })
 
   return (
     <motion.p
       ref={ref}
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.1, ease: [0.25, 0.1, 0.25, 1] }}
-      className="font-serif text-[#162D22] text-3xl lg:text-[2.8rem] leading-snug tracking-wide"
+      transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+      className="font-serif text-[#EDE3CC] leading-none"
+      style={{ fontSize: 'clamp(2.5rem, 7vw, 8rem)' }}
     >
       {text}
     </motion.p>
@@ -44,29 +45,55 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
-      className="cursor-pointer group"
+      className="cursor-pointer group relative overflow-hidden"
+      style={{ aspectRatio: '3/4' }}
     >
-      <div className="aspect-[3/4] relative overflow-hidden mb-5 border border-[rgba(237,227,204,0.08)]">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1810] to-[#162D22]" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-serif text-[rgba(237,227,204,0.06)] text-[8rem] leading-none select-none">
-            {product.name[0]}
-          </span>
-        </div>
-        <div className="absolute inset-0 bg-[rgba(237,227,204,0.04)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+      {/* Background */}
+      <div
+        className="absolute inset-0 transition-all duration-700"
+        style={{
+          background: 'linear-gradient(160deg, #0a1810 0%, #162D22 100%)',
+          filter: 'brightness(1)',
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        style={{
+          background: 'linear-gradient(160deg, #0d1f14 0%, #1e3a28 100%)',
+          filter: 'brightness(1.15)',
+        }}
+      />
+
+      {/* Watermark letter */}
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+        <span
+          className="font-serif leading-none select-none text-[#EDE3CC]"
+          style={{ fontSize: '40vw', opacity: 0.06 }}
+        >
+          {product.name[0]}
+        </span>
+      </div>
+
+      {/* Bottom info — always visible */}
+      <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
+        <h3 className="font-serif text-[#EDE3CC] leading-none mb-2" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 3rem)' }}>
+          {product.name}
+        </h3>
+        <p className="text-[rgba(237,227,204,0.45)] text-xs tracking-[0.25em] mb-5">
+          {product.price} PLN
+        </p>
+
+        {/* Add to Bag — appears on hover */}
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             type="button"
             onClick={handleAdd}
-            className="w-full py-3.5 bg-[#162D22]/90 backdrop-blur-sm border border-[rgba(237,227,204,0.4)] text-[#EDE3CC] text-[10px] tracking-[0.35em] uppercase hover:bg-[#EDE3CC] hover:text-[#162D22] transition-colors duration-200"
+            className="py-3 px-8 border border-[rgba(237,227,204,0.4)] text-[#EDE3CC] text-[10px] tracking-[0.35em] uppercase hover:bg-[#EDE3CC] hover:text-[#162D22] transition-colors duration-200"
           >
             {added ? 'Added ✓' : 'Add to Bag'}
           </button>
         </div>
       </div>
-
-      <h3 className="font-serif text-[#EDE3CC] text-2xl leading-none mb-1">{product.name}</h3>
-      <p className="text-[rgba(237,227,204,0.45)] text-xs tracking-[0.25em]">{product.price} PLN</p>
     </div>
   )
 }
@@ -84,41 +111,56 @@ export function Home() {
   return (
     <main>
       {/* Hero */}
-      <section className="section-forest h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <motion.h1
-          initial={{ opacity: 0, y: 32 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: [0.25, 0.1, 0.25, 1], delay: 0.15 }}
-          className="font-serif text-[#EDE3CC] text-[7vw] lg:text-[5.5vw] leading-none tracking-tight text-center px-8 mb-12"
+      <section className="section-forest h-screen flex flex-col justify-center relative overflow-hidden">
+        {/* Grain overlay */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ opacity: 0.04 }}
         >
-          Ślad który zostawiasz.
-        </motion.h1>
+          <filter id="hero-grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#hero-grain)" />
+        </svg>
 
-        <motion.button
-          type="button"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1], delay: 0.55 }}
-          onClick={() => collectionRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="font-sans text-[rgba(237,227,204,0.5)] text-[10px] tracking-[0.45em] uppercase hover:text-[rgba(237,227,204,0.85)] transition-colors border-b border-[rgba(237,227,204,0.2)] pb-1"
-        >
-          Odkryj kolekcję
-        </motion.button>
+        <div className="relative z-10 flex flex-col items-start" style={{ paddingLeft: '6vw' }}>
+          <motion.h1
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.4, ease: [0.25, 0.1, 0.25, 1], delay: 0.15 }}
+            className="font-serif text-[#EDE3CC] leading-none tracking-tight mb-10"
+            style={{ fontSize: 'clamp(5rem, 12vw, 14rem)' }}
+          >
+            Ślad który<br />zostawiasz.
+          </motion.h1>
+
+          <motion.button
+            type="button"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1], delay: 0.6 }}
+            onClick={() => collectionRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="font-sans text-[rgba(237,227,204,0.5)] text-[10px] tracking-[0.45em] uppercase hover:text-[rgba(237,227,204,0.85)] transition-colors border-b border-[rgba(237,227,204,0.2)] pb-1"
+          >
+            Odkryj kolekcję
+          </motion.button>
+        </div>
       </section>
 
       {/* Filozofia */}
-      <section className="section-cream py-40 px-8 lg:px-24">
-        <div className="max-w-3xl space-y-20">
+      <section className="section-forest py-[15vh]" style={{ paddingLeft: '6vw', paddingRight: '6vw' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20vh' }}>
           {FILOSOFIA.map((line, i) => (
             <RevealLine key={i} text={line} />
           ))}
         </div>
       </section>
 
-      {/* Kolekcja */}
-      <section ref={collectionRef} className="section-forest py-24 px-8 lg:px-12">
-        <h2 className="font-serif text-[#EDE3CC] text-4xl mb-14 tracking-wide">Kolekcja</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 max-w-4xl">
+      {/* Kolekcja — full width, no heading, no padding */}
+      <section ref={collectionRef} className="section-forest">
+        <div className="grid grid-cols-2">
           {products.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
       </section>
