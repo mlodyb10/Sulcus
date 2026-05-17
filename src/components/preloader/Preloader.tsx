@@ -6,11 +6,11 @@ interface Props {
 }
 
 const FRAMES = [
-  '/preloader/smoke.jpg',
-  '/preloader/skin.jpg',
-  '/preloader/fabric.jpg',
-  '/preloader/flame.jpg',
-  '/preloader/amber.jpg',
+  '/smoke.jpeg',
+  '/skin.jpeg',
+  '/fabric.jpeg',
+  '/flame.jpeg',
+  '/amber.jpeg',
 ]
 
 export function Preloader({ onComplete }: Props) {
