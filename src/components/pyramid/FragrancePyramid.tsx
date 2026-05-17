@@ -65,13 +65,13 @@ export function FragrancePyramid({ notes }: Props) {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col lg:flex-row items-start gap-16 w-full max-w-5xl">
+      <div className="flex flex-col lg:flex-row items-center gap-16">
 
         {/* ── SVG: pyramid + connecting lines + note labels ── */}
-        <div className="w-full lg:w-1/2 flex justify-center">
+        <div className="flex justify-center flex-shrink-0">
           <svg
             viewBox="0 0 620 590"
-            style={{ width: '100%', minHeight: '500px', maxHeight: '680px' }}
+            style={{ height: '450px', width: 'auto' }}
           >
             {/* Tier polygons */}
             {TIERS.map(tier => {
