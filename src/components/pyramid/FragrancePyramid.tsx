@@ -71,7 +71,7 @@ export function FragrancePyramid({ notes }: Props) {
         <div className="flex justify-center flex-shrink-0">
           <svg
             viewBox="0 0 620 590"
-            style={{ height: '450px', width: 'auto' }}
+            style={{ height: 'clamp(280px, 55vw, 450px)', width: 'auto' }}
           >
             {/* Tier polygons */}
             {TIERS.map(tier => {
@@ -133,7 +133,7 @@ export function FragrancePyramid({ notes }: Props) {
         </div>
 
         {/* ── Description panel — fixed width prevents layout shift ── */}
-        <div className="flex-shrink-0 w-72" style={{ paddingTop: '60px' }}>
+        <div className="flex-shrink-0 w-full lg:w-72" style={{ paddingTop: '8px' }}>
           <AnimatePresence mode="wait">
             {selectedNote ? (
               <motion.div

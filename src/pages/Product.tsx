@@ -76,7 +76,7 @@ export function Product() {
 
           {/* Main image */}
           <div className="flex-1 relative overflow-hidden border border-[rgba(237,227,204,0.08)]"
-            style={{ minHeight: '70vh' }}>
+            style={{ minHeight: 'min(70vh, 80vw)' }}>
             <motion.img
               key={activeThumb}
               src={[
